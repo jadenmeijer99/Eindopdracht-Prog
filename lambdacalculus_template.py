@@ -33,8 +33,8 @@ class Variable(LambdaTerm):
 
     def __repr__(self): raise NotImplementedError
 
-    def __str__(self): raise NotImplementedError
-
+    def __str__(self):
+        return str(self.symb)
     def substitute(self, rules): raise NotImplementedError
 
 
@@ -45,9 +45,10 @@ class Abstraction(LambdaTerm):
         self.var = variable
         self.body = body
     
-    def __repr__(self):
-        return "(" + chr(955) + str(self.var) + "." + str(self.body) + ")"
-    def __str__(self): raise NotImplementedError
+    def __repr__(self): raise NotImplementedError
+        
+    def __str__(self):
+        return chr(955) + str(self.var) + "." + str(self.body)
 
     def __call__(self, argument): raise NotImplementedError
 
@@ -60,11 +61,17 @@ class Application(LambdaTerm):
     def __init__(self, function, argument):
         self.func = function
         self.arg = argument
-    def __repr__(self):
-        return "(" + str(self.func) + " " + str(self.arg) + ")"
-    def __str__(self): raise NotImplementedError
+    def __repr__(self): raise NotImplementedError
+        
+    def __str__(self): 
+        return "(" + str(self.func) + ") " + str(self.arg)
 
     def substitute(self, rules): raise NotImplementedError
 
     def reduce(self): raise NotImplementedError
 
+x = Variable('x')
+id = Abstraction(Variable('a'), Variable('a'))
+id_x = Application(id, x)
+
+for t in [x,id,id_x]: print(str(t))
