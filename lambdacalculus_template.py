@@ -6,7 +6,15 @@ class LambdaTerm:
 
     def fromstring(self):
         """Construct a lambda term from a string."""
-        raise NotImplementedError
+        exp = (self.rstrip(")")).lstrip("(")
+        if ord(exp[0]) == 955:
+            #abstraction
+            terms = (exp.replace(chr(955), "")).split(".")
+            return Abstraction(terms[0],terms[1])
+        else:
+            #application
+            terms = exp.split()
+            return Application(terms[0],terms[1])
 
     def substitute(self, rules):
         """Substitute values for keys where they occur."""
@@ -20,7 +28,8 @@ class LambdaTerm:
 class Variable(LambdaTerm):
     """Represents a variable."""
 
-    def __init__(self, symbol): raise NotImplementedError
+    def __init__(self, symbol):
+        self.symb = symbol
 
     def __repr__(self): raise NotImplementedError
 
@@ -32,10 +41,12 @@ class Variable(LambdaTerm):
 class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
 
-    def __init__(self, variable, body): raise NotImplementedError
-
-    def __repr__(self): raise NotImplementedError
-
+    def __init__(self, variable, body):
+        self.var = variable
+        self.body = body
+    
+    def __repr__(self):
+        return "(" + chr(955) + str(self.var) + "." + str(self.body) + ")"
     def __str__(self): raise NotImplementedError
 
     def __call__(self, argument): raise NotImplementedError
@@ -46,12 +57,14 @@ class Abstraction(LambdaTerm):
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
 
-    def __init__(self, function, argument): raise NotImplementedError
-
-    def __repr__(self): raise NotImplementedError
-
+    def __init__(self, function, argument):
+        self.func = function
+        self.arg = argument
+    def __repr__(self):
+        return "(" + str(self.func) + " " + str(self.arg) + ")"
     def __str__(self): raise NotImplementedError
 
     def substitute(self, rules): raise NotImplementedError
 
     def reduce(self): raise NotImplementedError
+
