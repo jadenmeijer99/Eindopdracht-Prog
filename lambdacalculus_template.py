@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-
 class LambdaTerm:
     """Abstract Base Class for lambda terms."""
 
@@ -31,8 +28,8 @@ class Variable(LambdaTerm):
     def __init__(self, symbol):
         self.symb = symbol
 
-    def __repr__(self): raise NotImplementedError
-
+    def __repr__(self):
+        return "Variable({})".format("'" + str(self.symb) + "'")
     def __str__(self):
         return str(self.symb)
     def substitute(self, rules): raise NotImplementedError
@@ -42,11 +39,11 @@ class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
 
     def __init__(self, variable, body):
-        self.var = variable
-        self.body = body
+        self.var = Variable(variable)
+        self.body = Variable(body)
     
-    def __repr__(self): raise NotImplementedError
-        
+    def __repr__(self):
+        return "Abstraction({},{})".format(repr(self.var), repr(self.body))
     def __str__(self):
         return chr(955) + str(self.var) + "." + str(self.body)
 
@@ -59,10 +56,11 @@ class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
 
     def __init__(self, function, argument):
-        self.func = function
-        self.arg = argument
-    def __repr__(self): raise NotImplementedError
-        
+        exp = (((str(function).rstrip(")")).lstrip("(")).replace(chr(955),"")).split(".")
+        self.func = Abstraction(exp[0],exp[1])
+        self.arg = Variable(argument)
+    def __repr__(self):
+        return "Application({},{})".format(repr(self.func), "'" + repr(self.arg) +"'")
     def __str__(self): 
         return "(" + str(self.func) + ") " + str(self.arg)
 
@@ -75,3 +73,4 @@ id = Abstraction(Variable('a'), Variable('a'))
 id_x = Application(id, x)
 
 for t in [x,id,id_x]: print(str(t))
+for t in [x,id,id_x]: print(repr(t))
