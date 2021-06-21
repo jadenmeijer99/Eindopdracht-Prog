@@ -16,6 +16,7 @@ class LambdaTerm:
     def substitute(self, rules):
         """Substitute values for keys where they occur."""
         raise NotImplementedError
+            
 
     def reduce(self):
         """Beta-reduce."""
