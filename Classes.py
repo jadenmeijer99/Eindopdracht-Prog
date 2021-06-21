@@ -33,7 +33,11 @@ class Variable(LambdaTerm):
         return "Variable({})".format("'" + str(self.symb) + "'")
     def __str__(self):
         return str(self.symb)
-    def substitute(self, rules): raise NotImplementedError
+    def substitute(self, rules): 
+        for x in rules:
+            terms = ((x.rstrip("]")).lstrip("[")).split(":=")
+            if terms[0] == self.symb:
+                self.symb = terms[1]
 
 
 class Abstraction(LambdaTerm):
@@ -61,7 +65,7 @@ class Application(LambdaTerm):
         self.func = Abstraction(exp[0],exp[1])
         self.arg = Variable(argument)
     def __repr__(self):
-        return "Application({},{})".format(repr(self.func), "'" + repr(self.arg) +"'")
+        return "Application({},{})".format(repr(self.func), repr(self.arg))
     def __str__(self): 
         return "(" + str(self.func) + ") " + str(self.arg)
 
