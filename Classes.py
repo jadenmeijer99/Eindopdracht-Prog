@@ -79,6 +79,8 @@ class Application(LambdaTerm):
             for x in function:
                 new += x + " "
             self.func = LambdaTerm.fromstring(new)
+        elif type(function) == Abstraction:
+            self.func = function
         self.arg = Variable(argument)
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
