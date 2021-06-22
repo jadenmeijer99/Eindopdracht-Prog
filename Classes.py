@@ -1,32 +1,31 @@
 class LambdaTerm:
-    """Abstract Base Class for lambda terms."""
+    #Abstract Base Class for lambda terms.
 
     def fromstring(self):
-        """Construct a lambda term from a string."""
+        #Construct a lambda term from a string.
         exp = self.split()
         condition = exp[0][:len(exp[0])-1]
         if condition == "\\":
-            #abstraction
+            #Abstraction
             expr1 = exp[0][len(exp[0])-1:len(exp[0])]
             exp.pop(0)
             return Abstraction(expr1,exp)
         else:
-            #application
+            #Application
             func = exp[:len(exp)-1]
             return Application(func,exp[-1])
 
     def substitute(self, rules):
-        """Substitute values for keys where they occur."""
+        #Substitute values for keys where they occur.
         raise NotImplementedError
-            
-
+        
     def reduce(self):
-        """Beta-reduce."""
+        #Beta-reduce.
         raise NotImplementedError
 
 
 class Variable(LambdaTerm):
-    """Represents a variable."""
+    #Represents a variable.
 
     def __init__(self, symbol):
         self.symb = symbol
@@ -43,7 +42,7 @@ class Variable(LambdaTerm):
 
 
 class Abstraction(LambdaTerm):
-    """Represents a lambda term of the form (λx.M)."""
+    #Represents a lambda term of the form (λx.M).
 
     def __init__(self, variable, body):
         if type(variable) == str:
@@ -71,7 +70,7 @@ class Abstraction(LambdaTerm):
 
 
 class Application(LambdaTerm):
-    """Represents a lambda term of the form (M N)."""
+    #Represents a lambda term of the form (M N).
 
     def __init__(self, function, argument):
         if type(function) == list:
@@ -81,6 +80,8 @@ class Application(LambdaTerm):
             self.func = LambdaTerm.fromstring(new)
         elif type(function) == Abstraction:
             self.func = function
+        else:
+            self.func = LambdaTerm.fromstring(function)
         self.arg = Variable(argument)
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
