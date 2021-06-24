@@ -1,6 +1,3 @@
-from typing import runtime_checkable
-
-
 class LambdaTerm:
     #Abstract Base Class for lambda terms.
 
