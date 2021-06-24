@@ -100,4 +100,5 @@ tt = LambdaTerm.fromstring(r"\a b. a")
 for t in [x,id,id_x]: print(str(t))
 for t in [x,id,id_x]: print(repr(t))
 print(repr(tt))
-#yeet: the second coming
+
+"[x:=u]"
