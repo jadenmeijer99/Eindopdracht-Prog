@@ -23,6 +23,14 @@ class LambdaTerm:
         exp = rules.split()
         self.substitute(exp)
         
+    def reduce(self):
+        #Beta-reduce.
+        raise NotImplementedError
+    
+    def __eq__(self, G):
+        #checks if string representations of two lambda functions are equal
+        return str(self) == str(G)
+        
 
 
 class Variable(LambdaTerm):
@@ -114,6 +122,13 @@ class Application(LambdaTerm):
         else:
             self.substitute(input)
         
+
+
+
+    
+
+    
+
 
 x = Variable('x')
 id = Abstraction(Variable('a'), Variable('a'))
