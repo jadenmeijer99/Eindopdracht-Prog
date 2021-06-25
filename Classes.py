@@ -82,7 +82,7 @@ class Abstraction(LambdaTerm):
         #Beta-reduce.
         #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
         if input == "":
-            return self.body
+            return str(self.body)
         else:
             self.substitute(input)
 
