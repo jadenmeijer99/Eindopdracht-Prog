@@ -1,3 +1,4 @@
+import Functies
 class LambdaTerm:
     #Abstract Base Class for lambda terms.
 
@@ -28,8 +29,8 @@ class LambdaTerm:
     
     def __eq__(self, G):
         #checks if string representations of two lambda functions are equal
-        self = changepower(self)
-        G = changepower(G)
+        self = Functies.changepower(self)
+        G = Functies.changepower(G)
         return str(self) == str(G)
         
 
