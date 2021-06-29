@@ -17,15 +17,6 @@ class LambdaTerm:
             #Application
             func = exp[:len(exp)-1]
             return Application(func,exp[-1])
-
-    def substitute(self, rules):
-        #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
-        exp = rules.split()
-        self.substitute(exp)
-        
-    def reduce(self):
-        #Beta-reduce.
-        raise NotImplementedError
     
     def __eq__(self, G):
         #checks if string representations of two lambda functions are equal
@@ -86,7 +77,7 @@ class Abstraction(LambdaTerm):
     
     def reduce(self, input = ""):
         #Beta-reduce.
-        #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
+        #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
         if type(self.body) == Variable:
             if input == "":
                 return str(self.body)
