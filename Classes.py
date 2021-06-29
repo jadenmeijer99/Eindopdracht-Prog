@@ -28,6 +28,8 @@ class LambdaTerm:
     
     def __eq__(self, G):
         #checks if string representations of two lambda functions are equal
+        self = changepower(self)
+        G = changepower(G)
         return str(self) == str(G)
         
 
