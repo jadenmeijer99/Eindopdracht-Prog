@@ -6,7 +6,7 @@ def changepower(func):
       #replace all ** to ^
       func = func.replace("**", "^")
 
-      #split function to sepesate terms
+      #split function to seperate terms
       func = func.split("+")
       for i in range(len(func)):
          
