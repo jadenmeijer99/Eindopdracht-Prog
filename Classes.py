@@ -2,7 +2,9 @@ class LambdaTerm:
     #Abstract Base Class for lambda terms.
 
     def fromstring(self):
-        #Construct a lambda term from a string.
+        """Construct a lambda term from a string.
+        aanvoer r"\v b" waarbij v de variabele is en b de body 
+        aan elkaar als het een gewonen expression is en in de vorm v. b als het een abstraction is."""
         exp = self.split()
         condition = exp[0][:len(exp[0])-1]
         if condition == "\\":
@@ -39,11 +41,11 @@ class Variable(LambdaTerm):
         return "Variable({})".format("'" + str(self.symb) + "'")
     def __str__(self):
         return str(self.symb)
-    def substitute(self, rules): 
-        for x in rules:
-            terms = ((x.rstrip("]")).lstrip("[")).split(":=")
-            if terms[0] == self.symb:
-                self.symb = terms[1]
+    def substitute(self, rules):
+        #aanvoer "A1 = 7" voor het variabel. 
+        terms = rules.split()
+        if terms[0] == self.symb:
+            self.symb = terms[2]
 
 
 class Abstraction(LambdaTerm):
@@ -70,21 +72,33 @@ class Abstraction(LambdaTerm):
         return chr(955) + str(self.var) + "." + str(self.body)
 
     def __call__(self, argument):
-        self.reduce(argument)
+        term = "{} = {}".format(str(self.var), str(argument))
+        return self.reduce(term)
 
     def substitute(self, rules):
-        #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
+        #aanvoer "A1 = 7" voor het variabel.
         values = rules.split()
-        for i in range(len(values)):
-            #do shit
-            raise NotImplementedError
+        return str(self.body).replace(values[0], values[2])
+
+    
     def reduce(self, input = ""):
         #Beta-reduce.
         #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
-        if input == "":
-            return str(self.body)
+        if type(self.body) == Variable:
+            if input == "":
+                return str(self.body)
+            else:
+                output = self.substitute(input)
+                return eval(output)
         else:
-            self.substitute(input)
+            if input == "":
+                return str(self.body.reduce(input))
+            else:
+                output = self.body.substitute(input)
+                try:
+                    return eval(output)
+                except:
+                    return output
 
 
 
@@ -104,20 +118,32 @@ class Application(LambdaTerm):
         else:
             self.func = LambdaTerm.fromstring(function)
         self.arg = Variable(argument)
+        self.redu = Abstraction(self.arg, self.func.reduce("{} = {}".format(str(self.func.var), str(self.arg))))
+
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
     def __str__(self): 
         return "(" + str(self.func) + ") " + str(self.arg)
 
-    def substitute(self, rules): raise NotImplementedError
+    def substitute(self, rules): 
+        #aanvoer "A1 = 7" voor de het variabel.
+        values = rules.split()
+        self.redu.body = Variable(str(self.redu.body).replace(values[0], values[2]))
 
     def reduce(self, input = ""):
         #Beta-reduce.
-        #aanvoer "A1 A2 A3 A4 ... An" voor de n variabelen.
+        #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
         if input == "":
-            return self.arg
+            return self.redu.substitute("{} = {}".format(str(self.func.var), str(self.arg)))
         else:
-            self.substitute(input)
+            terms = input.split()
+            newApp = Application(self.redu, self.arg)
+            for i in range(0, len(terms)-2,3):
+                newApp.substitute("{} {} {}".format(terms[0], terms[1], terms[2]))
+            try:
+                return eval(str(newApp.redu.body))
+            except:
+                return str(newApp.redu.body)
         
 
 
@@ -130,10 +156,20 @@ class Application(LambdaTerm):
 x = Variable('x')
 id = Abstraction(Variable('a'), Variable('a'))
 id_x = Application(id, x)
-tt = LambdaTerm.fromstring(r"\a b. a*a")
+tt = LambdaTerm.fromstring(r"\a a*a+a")
+tt2 = LambdaTerm.fromstring(r"\a b. a")
+tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
+
+
 
 for t in [x,id,id_x]: print(str(t))
 for t in [x,id,id_x]: print(repr(t))
-print(repr(tt))
-print(id_x, "-->", id_x.reduce())
-print(id(7))
+print(id_x, "-->", id_x.reduce('x = 34'))
+print(id(26))
+for t in [tt,tt2,tt3]: print(str(t))
+for t in [tt,tt2,tt3]: print(repr(t))
+for t in [tt,tt2,tt3]: print(t(20))
+for t in [tt,tt2,tt3]: print(t.reduce())
+
+
+
