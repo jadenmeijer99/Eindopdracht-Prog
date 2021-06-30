@@ -4,3 +4,4 @@ We hebben aan aantal files gebruikt die naar functie gelabeld zijn.
 
 Files:
 - Classes.py    bevat alle Classes die we gebruikt hebben.
+- Functions.py  bevat alle functies die we geimplementeerd en/of gebruikt hebben

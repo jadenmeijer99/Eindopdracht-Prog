@@ -13,13 +13,19 @@ class LambdaTerm:
             #Create Application object
             funcs = []
             for x in appcheck:
-                exp = Functions.changepower(x).split()
+                if "^" in x or "**" in x:
+                    exp = Functions.changepower(x).split()
+                else:
+                    exp = x.split()
                 expr1 = exp.pop(0)
                 funcs.append(Abstraction(expr1,exp))
             return Application(funcs[:-1],funcs[-1])
         else:
             #Create Abstraction object
-            exp = Functions.changepower(appcheck[0]).split()
+            if "^" in appcheck[0] or "**" in appcheck[0]:
+                exp = Functions.changepower(appcheck[0]).split()
+            else:
+                exp = appcheck[0].split()
             expr1 = exp[0][0]
             exp.pop(0)
             return Abstraction(expr1,exp)
@@ -103,7 +109,7 @@ class Abstraction(LambdaTerm):
         self.body.substitute(rules)
 
     
-    def reduce(self, input = ""):
+    def reduce(self, input = "", internal = False):
         #Beta-reduce.
         #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
         # (/\A1.(/\A2.(...(/\An.b)xn)...)x2)x1
@@ -114,6 +120,8 @@ class Abstraction(LambdaTerm):
             bod = bod.body
             bodies.append(bod)
         if input == "":
+            if internal:
+                return bodies[0]
             try:
                 return eval(str(bodies[-1]))
             except:
@@ -125,6 +133,8 @@ class Abstraction(LambdaTerm):
                 bodies[i].substitute("{} {} {}".format(terms[j], terms[j+1], terms[j+2]))
             else:
                 continue
+        if internal:
+            return bodies[0]
         try:
             return eval(str(bodies[-1]))
         except:
@@ -166,7 +176,7 @@ class Application(LambdaTerm):
         #aanvoer "A1 = 7" voor het variabel die in de functie veranderd moet worden.
         self.func.substitute(rules)
 
-    def reduce(self, input = ""):
+    def reduce(self, input = "", internal = False):
         #Beta-reduce.
         #aanvoer "A0 = x0 A1 = x1 ... An = xn, A0 = x0 A1 = x1 ... An = xn"
         #voor de n variabelen in de functie en het argument.
@@ -182,15 +192,37 @@ class Application(LambdaTerm):
                     if str(newAbstr.arg.var) in str(bodies[-1]):
                         raise ValueError("Varable {} is used as a representation for two distinct variables. \nPlease use the substitute function to change one of them.".format(str(newAbstr.arg.var)))
                     if len(str(bodies[-1])) > 1:
-                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.body)))
+                        variables = []
+                        for i in range(len(bodies)-1):
+                            variables.append(bodies[i].var)
+                        #this does not carry the vars of the reduced statement
+                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.reduce())))
                         bodies[-2].body = Abstraction(newAbstr.arg.var, bodies[-1])
                     else:
                         bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.body)))
                 else:
                     bodies[-2].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg)))
+                if internal:
+                    return bodies[0].body
                 return bodies[0].reduce(input)
             else:
+                if internal:
+                    return bodies[0].body
                 return bodies[0].reduce(input)
+        elif type(self.func) == Application:
+            newAppl = copy.deepcopy(self)
+            funcs = [newAppl.func, newAppl.func.func]
+            f = newAppl.func.func
+            while type(f) == Application:
+                f = f.func
+                funcs.append(f)
+            funcs.pop()
+            newAbs = funcs[-1].reduce("", True)
+            funcs[-2].func = newAbs
+            redfunc = funcs[0].reduce(input, True)
+            Appl2 = Application(redfunc, newAppl.arg)
+            return Appl2.reduce(input)
+            
         
 
 
@@ -208,7 +240,7 @@ id_x2 = Application(id, id2)
 tt = LambdaTerm.fromstring(r"\a a*a+a")
 tt2 = LambdaTerm.fromstring(r"\a b. a")
 tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
-hope = LambdaTerm.fromstring(r"\a b. a*b \b b**3")
+hope = LambdaTerm.fromstring(r"\a b. a*b \b b**3 \x x*x \y d. y*d")
 k = Abstraction(Variable('x'), Variable('x^6'))
 kk = Abstraction(Variable('x'), Variable('x**6'))
 
@@ -224,10 +256,11 @@ print(tt3([3,4,5]))
 for t in [tt,tt2,tt3]: print(t)
 print(str(id_x2))
 print(hope)
+print(repr(hope))
 hope.substitute("b = c")
 print(str(hope))
 print(hope.reduce())
-print(hope.reduce("b = 3 c = 4"))
+print(hope.reduce("b = 3 x = 4"))
 print(tt3([2,3,4]))
 print(k(6) == kk(6))
 print(k(6) == 46656)
