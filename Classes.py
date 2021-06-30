@@ -5,7 +5,7 @@ class LambdaTerm:
     def fromstring(self):
         """Construct a lambda term from a string.
         aanvoer r"\v b" waarbij v de variabele is en b de body 
-        aan elkaar als het een gewonen expression is en in de vorm v. b als het een abstraction is."""
+        aan elkaar als het een gewone expression is en in de vorm v. b als het een abstraction is."""
         exp = self.split()
         condition = exp[0][:len(exp[0])-1]
         if condition == "\\":
@@ -22,6 +22,7 @@ class LambdaTerm:
         #checks if string representations of two lambda functions are equal
         self = str(self)
         G = str(G)
+        #change self and G such that powers are represented in similar fashion using changepower function
         if "**" in self or "^" in self:
             check1 = Functies.changepower(self)
         else:
@@ -54,6 +55,7 @@ class Abstraction(LambdaTerm):
     #Represents a lambda term of the form (λx.M).
 
     def __init__(self, variable, body):
+        #check if given variable is of type "Variable", if not change so it is
         if type(variable) == str:
             finvar = variable.replace(".","")
             self.var = Variable(finvar)
@@ -61,6 +63,7 @@ class Abstraction(LambdaTerm):
             self.var = variable
         else:
             self.var = Variable(variable)
+        #check if body is of type "Variable", if not change so it is
         if type(body) == list and len(body)>1:
             self.body = Abstraction(body.pop(0), body)
         elif type(body) == list:
@@ -71,6 +74,7 @@ class Abstraction(LambdaTerm):
     def __repr__(self):
         return "Abstraction({}, {})".format(repr(self.var), repr(self.body))
     def __str__(self):
+        #output gives the LambdaTerm in the form "λx.M" where x is self.var and M is self.body
         return chr(955) + str(self.var) + "." + str(self.body)
 
     def __call__(self, argument):
