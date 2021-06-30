@@ -92,7 +92,6 @@ class Abstraction(LambdaTerm):
                 bodies[i].substitute("{} {} {}".format(terms[j], terms[j+1], terms[j+2]))
             else:
                 continue
-        print(bodies)
         try:
             return eval(str(bodies[-1]))
         except:
@@ -121,8 +120,6 @@ class Application(LambdaTerm):
         else:
             self.arg = argument
 
-        #self.redu = Abstraction(self.arg, self.func.reduce("{} = {}".format(str(self.func.var), str(self.arg))))
-
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
     def __str__(self): 
@@ -132,12 +129,16 @@ class Application(LambdaTerm):
             return "(" + str(self.func) + ") " + "(" + str(self.arg) + ")"
 
     def substitute(self, rules): 
-        #aanvoer "A1 = 7" voor het variabel.
-        raise NotImplementedError
+        #aanvoer "A1 = 7" voor het variabel die in de functie veranderd moet worden.
+        self.func.substitute(rules)
 
     def reduce(self, input = ""):
         #Beta-reduce.
-        #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
+        #aanvoer "A0 = x0 A1 = x1 ... An = xn, A0 = x0 A1 = x1 ... An = xn"
+        #voor de n variabelen in de functie en het argument.
+        splt = input.split(",")
+        if len(splt) == 1:
+            return 
         raise NotImplementedError
         
 
@@ -156,7 +157,7 @@ id_x2 = Application(id, id2)
 tt = LambdaTerm.fromstring(r"\a a*a+a")
 tt2 = LambdaTerm.fromstring(r"\a b. a")
 tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
-hope = LambdaTerm.fromstring(r"\a a*a \b b*b*b")
+hope = LambdaTerm.fromstring(r"\a b. a*b \b b*b*b")
 k = Abstraction(Variable('x'), Variable('x^6'))
 kk = Abstraction(Variable('x'), Variable('x**6'))
 
@@ -172,6 +173,7 @@ for t in [tt,tt2,tt3]: print(t.reduce())
 print(tt3.reduce("a = 3 b = 4 x = 6"))
 #for t in [tt,tt2,tt3]: print(t)
 print(str(id_x2))
+hope.substitute("b = c")
 print(str(hope))
 #print(tt3([2,3,4]))
 #print(k == kk)
