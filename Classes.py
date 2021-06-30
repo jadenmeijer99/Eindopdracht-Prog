@@ -66,8 +66,19 @@ class Abstraction(LambdaTerm):
         return chr(955) + str(self.var) + "." + str(self.body)
 
     def __call__(self, argument):
-        term = "{} = {}".format(str(self.var), str(argument))
-        return self.reduce(term)
+        if type(argument) == int or type(argument) == str:
+            term = "{} = {}".format(str(self.var), str(argument))
+            return self.reduce(term)
+        #elif type(argument) == list:
+        #    newabstr = Abstraction(self.var, self.body)
+        #    term = ""
+        #    for i in range(len(argument)):
+        #        if term == "":
+        #            term += "{} = {}"
+        #        else:
+        #            term += " " + "{} = {}"
+        #        newabstr.body = newabstr.body.body
+        #    return
 
     def substitute(self, rules):
         #aanvoer "A1 = 7" voor het variabel.
@@ -164,6 +175,7 @@ for t in [tt,tt2,tt3]: print(str(t))
 for t in [tt,tt2,tt3]: print(repr(t))
 for t in [tt,tt2,tt3]: print(t(20))
 for t in [tt,tt2,tt3]: print(t.reduce())
+print(tt3([2,3,4]))
 
 
 
