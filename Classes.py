@@ -91,6 +91,10 @@ class Abstraction(LambdaTerm):
     def substitute(self, rules):
         #aanvoer "A1 = 7" voor het variabel.
         values = rules.split()
+        try:
+            int(values[2])
+        except:
+            self.var = Variable(values[2])
         return str(self.body).replace(values[0], values[2])
 
     
