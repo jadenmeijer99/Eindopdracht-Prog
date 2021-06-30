@@ -1,4 +1,4 @@
-import Functies
+import Functions
 import copy
 class LambdaTerm:
     #Abstract Base Class for lambda terms.
@@ -13,13 +13,13 @@ class LambdaTerm:
             #Create Application object
             funcs = []
             for x in appcheck:
-                exp = Functies.changepower(x).split()
+                exp = Functions.changepower(x).split()
                 expr1 = exp.pop(0)
                 funcs.append(Abstraction(expr1,exp))
             return Application(funcs[:-1],funcs[-1])
         else:
             #Create Abstraction object
-            exp = Functies.changepower(appcheck[0]).split()
+            exp = Functions.changepower(appcheck[0]).split()
             expr1 = exp[0][0]
             exp.pop(0)
             return Abstraction(expr1,exp)
@@ -44,7 +44,7 @@ class Variable(LambdaTerm):
 
     def __init__(self, symbol):
         if "**" in symbol or "^" in symbol:
-            self.symb = Functies.changepower(symbol)
+            self.symb = Functions.changepower(symbol)
         else:
             self.symb = symbol
     def __repr__(self):
