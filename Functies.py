@@ -25,7 +25,7 @@ def changepower(func):
           #clear toevoeging for next term
           toevoeging = ""
       
-      for i in len(range(func)):
+      for i in range(len(func)):
           # add all bases of the terms and add them to a string
         newfunc += func[i][0] + "+"
       newfunc = newfunc[:-1]

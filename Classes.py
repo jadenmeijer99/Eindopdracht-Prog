@@ -20,9 +20,17 @@ class LambdaTerm:
     
     def __eq__(self, G):
         #checks if string representations of two lambda functions are equal
-        self = Functies.changepower(self)
-        G = Functies.changepower(G)
-        return str(self) == str(G)
+        self = str(self)
+        G = str(G)
+        if "**" in self or "^" in self:
+            check1 = Functies.changepower(self)
+        else:
+            check1 = self
+        if "**" in G or "^" in G:
+            check2 = Functies.changepower(G)
+        else:
+            check2 = G
+        return check1 == check2
         
 
 
@@ -164,8 +172,8 @@ id_x = Application(id, x)
 tt = LambdaTerm.fromstring(r"\a a*a+a")
 tt2 = LambdaTerm.fromstring(r"\a b. a")
 tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
-
-
+k = Abstraction(Variable('x'), Variable('x^6'))
+kk = Abstraction(Variable('x'), Variable('x**6'))
 
 for t in [x,id,id_x]: print(str(t))
 for t in [x,id,id_x]: print(repr(t))
@@ -176,6 +184,5 @@ for t in [tt,tt2,tt3]: print(repr(t))
 for t in [tt,tt2,tt3]: print(t(20))
 for t in [tt,tt2,tt3]: print(t.reduce())
 print(tt3([2,3,4]))
-
-
+print(k == kk)
 
