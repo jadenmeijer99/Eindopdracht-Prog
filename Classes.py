@@ -140,6 +140,7 @@ class Application(LambdaTerm):
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
     def __str__(self): 
+        #output gives the LambdaTerm in the form (λx.M)N where x is self.var , M is self.body , and N is self.arg
         return "(" + str(self.func) + ") " + str(self.arg)
 
     def substitute(self, rules): 
