@@ -1,7 +1,7 @@
-from Classes import LambdaTerm
-from Classes import Variable
-from Classes import Abstraction
-from Classes import Application
+from .Classes import LambdaTerm
+from .Classes import Variable
+from .Classes import Abstraction
+from .Classes import Application
 import copy
 
 """Begin Class tests"""
