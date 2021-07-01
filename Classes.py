@@ -1,4 +1,4 @@
-import Functions
+from Functions import changepower
 import copy
 class LambdaTerm:
     #Abstract Base Class for lambda terms.
@@ -13,17 +13,16 @@ class LambdaTerm:
             #Create Application object
             funcs = []
             for x in appcheck:
-                if "^" in x or "**" in x:
-                    exp = Functions.changepower(x).split()
-                else:
-                    exp = x.split()
+                exp = x.split()
+                if "^" in exp[-1] or "**" in exp[-1]:
+                    exp[-1] = changepower(exp[-1])
                 expr1 = exp.pop(0)
                 funcs.append(Abstraction(expr1,exp))
             return Application(funcs[:-1],funcs[-1])
         else:
             #Create Abstraction object
             if "^" in appcheck[0] or "**" in appcheck[0]:
-                exp = Functions.changepower(appcheck[0]).split()
+                exp = changepower(appcheck[0]).split()
             else:
                 exp = appcheck[0].split()
             expr1 = exp[0][0]
@@ -50,7 +49,7 @@ class Variable(LambdaTerm):
 
     def __init__(self, symbol):
         if "**" in symbol or "^" in symbol:
-            self.symb = Functions.changepower(symbol)
+            self.symb = changepower(symbol)
         else:
             self.symb = symbol
     def __repr__(self):
@@ -78,10 +77,10 @@ class Abstraction(LambdaTerm):
             self.body = Abstraction(body.pop(0), body)
         elif type(body) == list:
             self.body = Variable(body[0])
-        elif type(body) == Variable:
-            self.body = body
-        else:
+        elif type(body) == str:
             self.body = Variable(body)
+        else:
+            self.body = body
     
     def __repr__(self):
         return "Abstraction({}, {})".format(repr(self.var), repr(self.body))
@@ -126,11 +125,17 @@ class Abstraction(LambdaTerm):
                 return eval(str(bodies[-1]))
             except:
                 return str(bodies[-1])
-        terms = input.split()
+        tempterms = input.split()
+        for k in range(len(tempterms)):
+            tempterms[k] = tempterms[k].replace("=", "")
+        tempterms = [a for a in tempterms if a != '']
+        terms = []
+        for x in range(0,len(tempterms),2):
+            terms.append("{} = {}".format(tempterms[x], tempterms[x+1]))
         for i in range(len(bodies)-1):
-            if str(bodies[i].var) in terms:
-                j = terms.index(str(bodies[i].var))
-                bodies[i].substitute("{} {} {}".format(terms[j], terms[j+1], terms[j+2]))
+            for h in range(len(terms)):
+                if str(bodies[i].var) in terms[h]:
+                    bodies[i].substitute(terms[h])
             else:
                 continue
         if internal:
@@ -192,14 +197,25 @@ class Application(LambdaTerm):
                     if str(newAbstr.arg.var) in str(bodies[-1]):
                         raise ValueError("Varable {} is used as a representation for two distinct variables. \nPlease use the substitute function to change one of them.".format(str(newAbstr.arg.var)))
                     if len(str(bodies[-1])) > 1:
-                        variables = []
-                        for i in range(len(bodies)-1):
-                            variables.append(bodies[i].var)
                         #this does not carry the vars of the reduced statement
-                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.reduce())))
-                        bodies[-2].body = Abstraction(newAbstr.arg.var, bodies[-1])
+                        temp = newAbstr.arg.reduce("", True)
+                        bod2 = temp.body
+                        temp2 = temp.var
+                        bodies2 = [temp2]
+                        while type(bod2) == Abstraction:
+                            temp2 = bod2.var
+                            bod2 = bod2.body
+                            bodies2.append(temp2)
+                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(temp.reduce())))
+                        j = len(bodies)-1
+                        for i in range(len(bodies2)-1,-1,-1):
+                            if type(bodies[j]) == Variable:
+                                bodies[j-1].body = Abstraction(bodies2[i], bodies[j])
+                                j -= 1
+                            elif type(bodies[j]) == Abstraction:
+                                bodies[j].body = Abstraction(bodies2[i], bodies[j].body)
                     else:
-                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.body)))
+                        bodies[-1].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg.reduce())))
                 else:
                     bodies[-2].substitute("{} = {}".format(str(newAbstr.func.var), str(newAbstr.arg)))
                 if internal:
@@ -221,48 +237,6 @@ class Application(LambdaTerm):
             funcs[-2].func = newAbs
             redfunc = funcs[0].reduce(input, True)
             Appl2 = Application(redfunc, newAppl.arg)
+            if internal:
+                return Appl2.reduce(input, True)
             return Appl2.reduce(input)
-            
-        
-
-
-
-    
-"""Test Area"""
-    
-
-
-x = Variable('x')
-id = Abstraction(Variable('a'), Variable('a'))
-id2 = Abstraction(Variable('b'), Variable('b'))
-id_x = Application(id, x)
-id_x2 = Application(id, id2)
-tt = LambdaTerm.fromstring(r"\a a*a+a")
-tt2 = LambdaTerm.fromstring(r"\a b. a")
-tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
-hope = LambdaTerm.fromstring(r"\a b. a*b \b b**3 \x x*x \y d. y*d")
-k = Abstraction(Variable('x'), Variable('x^6'))
-kk = Abstraction(Variable('x'), Variable('x**6'))
-
-for t in [x,id,id_x]: print(str(t))
-for t in [x,id,id_x]: print(repr(t))
-print(id_x, "-->", id_x.reduce('x = 34'))
-print(id(26))
-for t in [tt,tt2,tt3]: print(str(t))
-for t in [tt,tt2,tt3]: print(repr(t))
-for t in [tt,tt2,tt3]: print(t(20))
-for t in [tt,tt2,tt3]: print(t.reduce())
-print(tt3([3,4,5]))
-for t in [tt,tt2,tt3]: print(t)
-print(str(id_x2))
-print(hope)
-print(repr(hope))
-hope.substitute("b = c")
-print(str(hope))
-print(hope.reduce())
-print(hope.reduce("b = 3 x = 4"))
-print(tt3([2,3,4]))
-print(k(6) == kk(6))
-print(k(6) == 46656)
-print(46656 == k(6))
-
