@@ -120,6 +120,7 @@ print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/10000
 start = time.perf_counter_ns()
 print(str(k4) == "({}b.{}x.b*b*b*x*x) ({}y.{}d.y*d)".format(chr(955),chr(955),chr(955),chr(955)))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
+
 print("--str--")
 start = time.perf_counter_ns()
 print((str(x) == "x"))
@@ -133,6 +134,7 @@ print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/10000
 start = time.perf_counter_ns()
 print(str(hope3.reduce("", True)) == "{}x.{}y.{}d.y*d*y*d*y*d*x*x".format(chr(955),chr(955),chr(955)))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
+
 print("--repr--")
 start = time.perf_counter_ns()
 print((repr(x) == "Variable('x')"))
@@ -143,6 +145,7 @@ print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/10000
 start = time.perf_counter_ns()
 print((repr(id_x) == "Application(Abstraction(Variable('a'), Variable('a')), Variable('x'))"))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
+
 print("--reduce--")
 start = time.perf_counter_ns()
 print(id.reduce() == "a")

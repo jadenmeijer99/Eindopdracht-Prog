@@ -44,7 +44,7 @@ class LambdaTerm:
         return self.reduce() == G.reduce()
 
 class Variable(LambdaTerm):
-    #Represents a variable.
+    #Represents a Variable.
 
     def __init__(self, symbol):
         if "**" in symbol or "^" in symbol:
@@ -59,7 +59,7 @@ class Variable(LambdaTerm):
         return str(self.symb)
 
     def substitute(self, rules):
-        #aanvoer "A1 = 7" voor het variabel.
+        #substitutes the symbol for this Variable object
         rules = rules.replace(" ","")
         terms = rules.split("=")
         if terms[0] in self.symb:
@@ -106,14 +106,12 @@ class Abstraction(LambdaTerm):
                 return selfcpy(argument[0])
 
     def substitute(self, rules):
-        #aanvoer "A1 = 7" voor het variabel.
+        #substitutes the variable and body for this Abstraction object
         self.var.substitute(rules)
         self.body.substitute(rules)
 
     def reduce(self, input = "", internal = False):
         #Beta-reduce.
-        #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
-        # (/\A1.(/\A2.(...(/\An.b)xn)...)x2)x1
         newAbstr = copy.deepcopy(self)
         bodies = [newAbstr, newAbstr.body]
         bod = newAbstr.body
@@ -176,13 +174,11 @@ class Application(LambdaTerm):
             return "(" + str(self.func) + ") " + "(" + str(self.arg) + ")"
 
     def substitute(self, rules): 
-        #aanvoer "A1 = 7" voor het variabel die in de functie veranderd moet worden.
+        #substitutes the variable into the function of this Application object.
         self.func.substitute(rules)
 
     def reduce(self, input = "", internal = False):
         #Beta-reduce.
-        #aanvoer "A0 = x0 A1 = x1 ... An = xn, A0 = x0 A1 = x1 ... An = xn"
-        #voor de n variabelen in de functie en het argument.
         if type(self.func) == Abstraction:
             newAbstr = copy.deepcopy(self)
             bodies = [newAbstr.func, newAbstr.func.body]
@@ -234,7 +230,7 @@ class Application(LambdaTerm):
             newAbs = funcs[-1].reduce("", True)
             if type(newAbs) == str:
                 return newAbs
-            funcs[-2].func = newAbs
+            funcs[0].func = newAbs
             redfunc = funcs[0].reduce(input, True)
             if type(redfunc) == str:
                 return newAbs
