@@ -28,21 +28,20 @@ class LambdaTerm:
             expr1 = exp[0][0]
             exp.pop(0)
             return Abstraction(expr1,exp)
+            
     def __eq__(self, G):
         """checks if string representations of two reduced lambda functions
         or a lambda function and an integer or string are equal"""
         if type(G) == int or type(G) == str:
             return self.reduce() == str(G)
         return self.reduce() == G.reduce()
+
     def __req__(self, G):
         """checks if string representations of two reduced lambda functions
         or a lambda function and an integer or string are equal if the order of the two is reversed"""
         if type(G) == int or type(G) == str:
             return self.reduce() == str(G)
         return self.reduce() == G.reduce()
-
-        
-
 
 class Variable(LambdaTerm):
     #Represents a variable.
@@ -52,10 +51,13 @@ class Variable(LambdaTerm):
             self.symb = changepower(symbol)
         else:
             self.symb = symbol
+
     def __repr__(self):
         return "Variable({})".format("'" + str(self.symb) + "'")
+
     def __str__(self):
         return str(self.symb)
+
     def substitute(self, rules):
         #aanvoer "A1 = 7" voor het variabel.
         rules = rules.replace(" ","")
@@ -84,9 +86,10 @@ class Abstraction(LambdaTerm):
     
     def __repr__(self):
         return "Abstraction({}, {})".format(repr(self.var), repr(self.body))
+
     def __str__(self):
         #output gives the LambdaTerm in the form "λx.M" where x is self.var and M is self.body
-        #output gives the LambdaTerm in the form (λx.M)N where x is self.var , M is self.body , and N is self.arg
+        #or output gives the LambdaTerm in the form (λx.M)N where x is self.var , M is self.body , and N is self.arg
         return chr(955) + str(self.var) + "." + str(self.body)
 
     def __call__(self, argument):
@@ -107,7 +110,6 @@ class Abstraction(LambdaTerm):
         self.var.substitute(rules)
         self.body.substitute(rules)
 
-    
     def reduce(self, input = "", internal = False):
         #Beta-reduce.
         #aanvoer "A0 = x0 A1 = x1 ... An = xn" voor de n variabelen.
@@ -144,11 +146,6 @@ class Abstraction(LambdaTerm):
             return eval(str(bodies[-1]))
         except:
             return str(bodies[-1])
-        
-
-
-
-
 
 class Application(LambdaTerm):
     #Represents a lambda term of the form (M N).
@@ -170,6 +167,7 @@ class Application(LambdaTerm):
 
     def __repr__(self):
         return "Application({}, {})".format(repr(self.func), repr(self.arg))
+
     def __str__(self): 
         #output gives the LambdaTerm in the form (λx.M)N where x is self.var , M is self.body , and N is self.arg
         if type(self.arg) == Variable:
