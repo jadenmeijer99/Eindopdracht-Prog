@@ -162,9 +162,3 @@ print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/10000
 print("Total Unix test time: {} ms".format(str(abs(time.perf_counter_ns() - fullstart)/1000000)))
 
 """End Class tests"""
-
-"""Begin Function tests"""
-
-#test here
-
-"""End Function tests"""
