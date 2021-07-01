@@ -195,7 +195,7 @@ class Application(LambdaTerm):
             if str(bodies[0].var) in str(bodies[-1]):
                 if type(newAbstr.arg) == Abstraction:
                     if str(newAbstr.arg.var) in str(bodies[-1]):
-                        raise ValueError("Varable {} is used as a representation for two distinct variables. \nPlease use the substitute function to change one of them.".format(str(newAbstr.arg.var)))
+                        return "Variable {} is used as a representation for two distinct variables. \nPlease use the substitute function to change one of them.".format(str(newAbstr.arg.var))
                     if len(str(bodies[-1])) > 1:
                         #this does not carry the vars of the reduced statement
                         temp = newAbstr.arg.reduce("", True)
@@ -234,8 +234,12 @@ class Application(LambdaTerm):
                 funcs.append(f)
             funcs.pop()
             newAbs = funcs[-1].reduce("", True)
+            if type(newAbs) == str:
+                return newAbs
             funcs[-2].func = newAbs
             redfunc = funcs[0].reduce(input, True)
+            if type(redfunc) == str:
+                return newAbs
             Appl2 = Application(redfunc, newAppl.arg)
             if internal:
                 return Appl2.reduce(input, True)
