@@ -2,9 +2,13 @@ from Classes import LambdaTerm
 from Classes import Variable
 from Classes import Abstraction
 from Classes import Application
+import copy
 
 """Begin Class tests"""
 
+#Debug section
+
+print("\n---Debug tests--- \nPlease ingore the messiness \n ")
 x = Variable('x')
 id = Abstraction(Variable('a'), Variable('a'))
 id2 = Abstraction(Variable('b'), Variable('b'))
@@ -17,7 +21,6 @@ hope = LambdaTerm.fromstring(r"\a b. a*b \b b**3 \x x*x \y d. y*d")
 hope2 = LambdaTerm.fromstring(r"\a b. a*b \y d. y*d")
 k = Abstraction(Variable('x'), Variable('x^6'))
 kk = Abstraction(Variable('x'), Variable('x**6'))
-k3 = LambdaTerm.fromstring(r"\a b. a*b \y d. y*d")
 k4 = LambdaTerm.fromstring(r"\b x. b*b*b*x*x \y d. y*d")
 
 for t in [x,id,id_x]: print(str(t))
@@ -47,6 +50,47 @@ print(46656 == k(6))
 print(k4.reduce())
 print(k4.reduce("", True))
 print(hope == k4)
+
+
+#Unit test section
+print("\n---Unit tests--- \nThese should all print True\n")
+x = Variable('x')
+id = Abstraction(Variable('a'), Variable('a'))
+id2 = Abstraction(Variable('b'), Variable('b'))
+id_x = Application(id, x)
+id_x2 = Application(id, id2)
+tt = LambdaTerm.fromstring(r"\a a*a+a")
+tt2 = LambdaTerm.fromstring(r"\a b. a")
+tt3 = LambdaTerm.fromstring(r"\a b. x. a*b*x")
+hope = LambdaTerm.fromstring(r"\a b. a*b \b b**3 \x x*x \y d. y*d")
+hope2 = LambdaTerm.fromstring(r"\a b. a*b \y d. y*d")
+hope3 = copy.deepcopy(hope)
+hope3.substitute("b = c")
+k = Abstraction(Variable('x'), Variable('x^6'))
+kk = Abstraction(Variable('x'), Variable('x**6'))
+k4 = LambdaTerm.fromstring(r"\b x. b**3*x*2 \y d. y*d")
+
+print("--fromstring--")
+print(str(tt) == "{}a.a*a+a".format(chr(955)))
+print(str(tt2) == "{}a.{}b.a".format(chr(955),chr(955)))
+print(str(tt3) == "{}a.{}b.{}x.a*b*x".format(chr(955),chr(955),chr(955)))
+print(str(hope) == "((({}a.{}b.a*b) ({}b.b*b*b)) ({}x.x*x)) ({}y.{}d.y*d)".format(chr(955),chr(955),chr(955),chr(955),chr(955),chr(955)))
+print(str(hope2) == "({}a.{}b.a*b) ({}y.{}d.y*d)".format(chr(955),chr(955),chr(955),chr(955)))
+print(str(k4) == "({}b.{}x.b*b*b*x*x) ({}y.{}d.y*d)".format(chr(955),chr(955),chr(955),chr(955)))
+print("--str--")
+print((str(x) == "x"))
+print((str(id) == "{}a.a".format(chr(955))))
+print((str(id_x) == "({}a.a) x".format(chr(955))))
+print(str(hope3.reduce("", True)) == "{}x.{}y.{}d.y*d*y*d*y*d*x*x".format(chr(955),chr(955),chr(955)))
+print("--repr--")
+print((repr(x) == "Variable('x')"))
+print((repr(id) == "Abstraction(Variable('a'), Variable('a'))"))
+print((repr(id_x) == "Application(Abstraction(Variable('a'), Variable('a')), Variable('x'))"))
+print("--reduce--")
+print(id.reduce() == "a")
+print(id_x.reduce() == "x")
+print(hope.reduce() == "Variable b is used as a representation for two distinct variables. \nPlease use the substitute function to change one of them.")
+print(hope3.reduce() == "y*d*y*d*y*d*x*x")
 
 """End Class tests"""
 
