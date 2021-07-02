@@ -101,7 +101,7 @@ start = time.perf_counter_ns()
 k4 = LambdaTerm.fromstring(r"\b x. b**3*x*2 \y d. y*d")
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
 
-print("--fromstring--")
+print("--str--")
 start = time.perf_counter_ns()
 print(str(tt) == "{}a.a*a+a".format(chr(955)))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
@@ -120,8 +120,6 @@ print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/10000
 start = time.perf_counter_ns()
 print(str(k4) == "({}b.{}x.b*b*b*x*x) ({}y.{}d.y*d)".format(chr(955),chr(955),chr(955),chr(955)))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
-
-print("--str--")
 start = time.perf_counter_ns()
 print((str(x) == "x"))
 print("Process Time: {} ms".format(str(abs(time.perf_counter_ns() - start)/1000000)))
