@@ -5,4 +5,4 @@ We hebben aan aantal files gebruikt die naar functie gelabeld zijn.
 Files:
 - Classes.py    bevat alle Classes die we gebruikt hebben.
 - Functions.py  bevat de changepower functie.
-- Tests.py      bevat alle test om te kijken of alles naar behoren werkt.
+- Tests.py      bevat alle test om te kijken of het programma naar behoren werkt.
